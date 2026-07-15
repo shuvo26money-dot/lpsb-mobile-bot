@@ -21,31 +21,34 @@ def generate_signal():
 
     pair = random.choice(available)
 
-    # market.py থেকে dictionary নেবে
-    data = get_market_signal(pair)
-
-    signal = data.get("signal", "WAIT")
-    rsi = data.get("rsi", 0)
-    ema20 = data.get("ema20", 0)
-    ema50 = data.get("ema50", 0)
-    confidence = data.get("confidence", 0)
-    reason = data.get("reason", "Market Not Clear")
+    # market.py tuple return করে
+    signal, rsi, ema20, confidence = get_market_signal(pair)
 
     now = time.time()
 
     # 60 সেকেন্ড cooldown
     if now - last_signal_time < COOLDOWN:
-        signal = "WAIT"
+        signal = "⏳ WAIT"
 
-    # Strong signal হলে last pair/time update
-    if signal in ["CALL", "PUT"] and confidence >= 90:
+    # শুধুমাত্র 90%+ confidence হলে signal
+    if signal in ["🟢 CALL", "🔴 PUT"] and confidence >= 90:
         last_pair = pair
         last_signal_time = now
+    else:
+        signal = "⏳ WAIT"
 
     tm = datetime.now().strftime("%H:%M")
 
-    # WAIT message
-    if signal == "WAIT":
+    # WAIT
+    if signal == "⏳ WAIT":
+
+        status = "📊 Market Not Clear"
+
+        if rsi >= 70:
+            status = "⚠️ Overbought - Wait"
+
+        elif rsi <= 30:
+            status = "⚠️ Oversold - Wait"
 
         message = f"""🎯 LPSB MOBILE SIGNAL
 
@@ -59,22 +62,13 @@ def generate_signal():
 📈 EMA20: {ema20}
 📉 EMA50: {ema50}
 
-⚠️ {reason}
+{status}
 
 ⚡ Strong Filter Mode
 """
 
-    # CALL / PUT message
+    # CALL / PUT
     else:
-
-        if confidence >= 90:
-            stars = "⭐⭐⭐⭐⭐"
-        elif confidence >= 80:
-            stars = "⭐⭐⭐⭐"
-        elif confidence >= 70:
-            stars = "⭐⭐⭐"
-        else:
-            stars = "⭐⭐"
 
         message = f"""🎯 LPSB MOBILE SIGNAL
 
@@ -82,16 +76,15 @@ def generate_signal():
 ⏰ Time: {tm}
 ⏳ Expiry: 1M
 
-🚨 {signal}
+{signal}
 
 📊 RSI: {rsi}
 📈 EMA20: {ema20}
 📉 EMA50: {ema50}
 
 🔥 Confidence: {confidence}%
-{stars}
+⭐⭐⭐⭐⭐
 
-⚡ {reason}
 ⚡ Strong Filter Mode
 """
 
