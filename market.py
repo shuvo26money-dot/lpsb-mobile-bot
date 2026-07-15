@@ -9,7 +9,7 @@ def calculate_ema(candles, period):
     closes = [c["close"] for c in candles]
 
     if len(closes) < period:
-        return closes[-1]
+        return 0
 
     ema = sum(closes[:period]) / period
     multiplier = 2 / (period + 1)
@@ -30,7 +30,7 @@ def calculate_rsi(candles, period=14):
     losses = []
 
     for i in range(1, len(closes)):
-        change = closes[i] - closes[i-1]
+        change = closes[i] - closes[i - 1]
 
         if change > 0:
             gains.append(change)
@@ -54,20 +54,20 @@ def get_market_signal(pair):
 
     candles = get_candles(pair)
 
-    if len(candles) < 50:
+    if not candles or len(candles) < 50:
         return "⏳ WAIT", 0, 0, 0
 
-
-    ema20 = calculate_ema(candles, EMA_FAST)
-    ema50 = calculate_ema(candles, EMA_SLOW)
+    ema20 = calculate_ema(candles, 20)
+    ema50 = calculate_ema(candles, 50)
     rsi = calculate_rsi(candles)
 
+    if ema20 <= 0 or ema50 <= 0:
+        return "⏳ WAIT", rsi, ema20, 0
 
     signal = "⏳ WAIT"
     confidence = 0
 
-
-    # Strong CALL
+    # CALL
     if ema20 > ema50 and rsi < 55:
         signal = "🟢 CALL"
         confidence = 85
@@ -75,14 +75,12 @@ def get_market_signal(pair):
         if rsi < 40:
             confidence = 90
 
-
-    # Strong PUT
+    # PUT
     elif ema20 < ema50 and rsi > 45:
         signal = "🔴 PUT"
         confidence = 85
 
         if rsi > 60:
             confidence = 90
-
 
     return signal, rsi, ema20, confidence
