@@ -46,7 +46,6 @@ def calculate_rsi(candles, period=14):
         return 100
 
     rs = avg_gain / avg_loss
-
     return round(100 - (100 / (1 + rs)), 2)
 
 
@@ -67,7 +66,6 @@ def get_market_signal(pair):
     signal = "⏳ WAIT"
     confidence = 0
 
-    # CALL
     if ema20 > ema50 and rsi < 55:
         signal = "🟢 CALL"
         confidence = 85
@@ -75,7 +73,6 @@ def get_market_signal(pair):
         if rsi < 40:
             confidence = 90
 
-    # PUT
     elif ema20 < ema50 and rsi > 45:
         signal = "🔴 PUT"
         confidence = 85
