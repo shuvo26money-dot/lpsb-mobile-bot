@@ -11,9 +11,9 @@ COOLDOWN = 60
 
 
 def generate_signal():
+
     global last_pair, last_signal_time
 
-    # আগের Pair বাদ
     available = [p for p in PAIRS if p != last_pair]
 
     if not available:
@@ -21,16 +21,15 @@ def generate_signal():
 
     pair = random.choice(available)
 
-    # market.py tuple return করে
     signal, rsi, ema20, confidence = get_market_signal(pair)
 
     now = time.time()
 
-    # 60 সেকেন্ড cooldown
+    # 60 seconds cooldown
     if now - last_signal_time < COOLDOWN:
         signal = "⏳ WAIT"
 
-    # শুধুমাত্র 90%+ confidence হলে signal
+    # Only 90%+ confidence signal
     if signal in ["🟢 CALL", "🔴 PUT"] and confidence >= 90:
         last_pair = pair
         last_signal_time = now
@@ -60,7 +59,6 @@ def generate_signal():
 
 📊 RSI: {rsi}
 📈 EMA20: {ema20}
-📉 EMA50: {ema50}
 
 {status}
 
@@ -80,7 +78,6 @@ def generate_signal():
 
 📊 RSI: {rsi}
 📈 EMA20: {ema20}
-📉 EMA50: {ema50}
 
 🔥 Confidence: {confidence}%
 ⭐⭐⭐⭐⭐
