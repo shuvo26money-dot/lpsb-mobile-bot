@@ -17,7 +17,7 @@ def generate_signal():
     global last_pair
     global last_signal_time
 
-    # আগের pair বাদ
+    # আগের Pair বাদ
     available = [
         p for p in PAIRS
         if p != last_pair
@@ -28,10 +28,10 @@ def generate_signal():
 
     pair = random.choice(available)
 
-    # Market data নেওয়া
+    # Market data নেবে
     signal, rsi, ema20, confidence = get_market_signal(pair)
 
-    # API data না এলে signal পাঠাবে না
+    # API data না এলে কোনো signal পাঠাবে না
     if rsi == 0 and ema20 == 0:
 
         print(
@@ -42,12 +42,12 @@ def generate_signal():
 
     now = time.time()
 
-    # Cooldown check
+    # 60 সেকেন্ড Cooldown
     if now - last_signal_time < COOLDOWN:
 
         signal = "⏳ WAIT"
 
-    # শুধু 90%+ confidence হলে valid signal
+    # শুধু 90% বা তার বেশি confidence হলে valid signal
     if signal in ["🟢 CALL", "🔴 PUT"] and confidence >= 90:
 
         last_pair = pair
@@ -61,7 +61,7 @@ def generate_signal():
     tm = datetime.now().strftime("%H:%M")
 
 
-    # WAIT হলে
+    # WAIT message
     if signal == "⏳ WAIT":
 
         status = "📊 Market Not Clear"
@@ -95,7 +95,7 @@ def generate_signal():
 """
 
 
-    # CALL / PUT হলে
+    # CALL / PUT message
     else:
 
         message = f"""🎯 LPSB MOBILE SIGNAL
