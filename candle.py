@@ -10,13 +10,17 @@ def get_candles(pair, count=50):
         print("❌ TWELVE_DATA_API_KEY not found")
         return []
 
-    # Pair আগে থেকেই EUR/USD format-এ আছে
-    symbol = pair
+    # EUR/USD format ঠিক রাখবে
+    pair = pair.replace("_OTC", "")
+    pair = pair.replace("-", "/")
+
+    if "/" not in pair:
+        pair = pair[:3] + "/" + pair[3:]
 
     url = "https://api.twelvedata.com/time_series"
 
     params = {
-        "symbol": symbol,
+        "symbol": pair,
         "interval": "1min",
         "outputsize": count,
         "apikey": api_key
@@ -32,13 +36,12 @@ def get_candles(pair, count=50):
 
         data = response.json()
 
+        if data.get("code") == 429:
+            print(f"⚠️ Rate limit reached for {pair}")
+            return []
+
         if "values" not in data:
-
-            print(
-                f"❌ API Response for {symbol}:",
-                data
-            )
-
+            print(f"❌ API Response for {pair}:", data)
             return []
 
         candles = []
@@ -56,9 +59,6 @@ def get_candles(pair, count=50):
 
     except Exception as e:
 
-        print(
-            f"❌ Candle Error for {symbol}:",
-            e
-        )
+        print("❌ Candle Error:", e)
 
         return []
