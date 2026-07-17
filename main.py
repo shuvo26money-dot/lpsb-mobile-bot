@@ -58,11 +58,11 @@ while True:
                 f"{datetime.now().strftime('%H:%M:%S')}"
             )
 
-        # 1 মিনিট wait
-        time.sleep(60)
+        # 2 মিনিট wait
+        time.sleep(120)
 
     except Exception as e:
 
         print(f"❌ Error: {e}")
 
-        time.sleep(60)
+        time.sleep(120)
