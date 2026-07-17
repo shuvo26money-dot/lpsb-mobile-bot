@@ -58,7 +58,7 @@ while True:
                 f"{datetime.now().strftime('%H:%M:%S')}"
             )
 
-        # 60 seconds wait
+        # 5 মিনিট wait
         time.sleep(300)
 
     except Exception as e:
