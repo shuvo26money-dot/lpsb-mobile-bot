@@ -17,21 +17,31 @@ def generate_signal():
     global last_pair
     global last_signal_time
 
-    # আগের Pair বাদ
+
+    # আগের pair বাদ
     available = [
         p for p in PAIRS
         if p != last_pair
     ]
 
+
     if not available:
+
         available = PAIRS
 
-    pair = random.choice(available)
 
-    # Market data নেবে
-    signal, rsi, ema20, confidence = get_market_signal(pair)
+    pair = random.choice(
+        available
+    )
 
-    # API data না এলে কোনো signal পাঠাবে না
+
+    # Market data
+    signal, rsi, ema20, confidence = (
+        get_market_signal(pair)
+    )
+
+
+    # Data না এলে
     if rsi == 0 and ema20 == 0:
 
         print(
@@ -40,39 +50,63 @@ def generate_signal():
 
         return None
 
+
     now = time.time()
 
-    # 60 সেকেন্ড Cooldown
-    if now - last_signal_time < COOLDOWN:
+
+    # Cooldown
+    if (
+        now - last_signal_time
+        < COOLDOWN
+    ):
 
         signal = "⏳ WAIT"
 
-    # শুধু 90% বা তার বেশি confidence হলে valid signal
-    if signal in ["🟢 CALL", "🔴 PUT"] and confidence >= 90:
+
+    # 85% বা তার বেশি হলেই signal
+    if (
+        signal in [
+            "🟢 CALL",
+            "🔴 PUT"
+        ]
+        and confidence >= 85
+    ):
 
         last_pair = pair
 
         last_signal_time = now
 
+
     else:
 
         signal = "⏳ WAIT"
 
-    tm = datetime.now().strftime("%H:%M")
+
+    tm = datetime.now().strftime(
+        "%H:%M"
+    )
 
 
-    # WAIT message
+    # WAIT
     if signal == "⏳ WAIT":
 
-        status = "📊 Market Not Clear"
+        status = (
+            "📊 Market Not Clear"
+        )
+
 
         if rsi >= 70:
 
-            status = "⚠️ Overbought - Wait"
+            status = (
+                "⚠️ Overbought - Wait"
+            )
+
 
         elif rsi <= 30:
 
-            status = "⚠️ Oversold - Wait"
+            status = (
+                "⚠️ Oversold - Wait"
+            )
 
 
         message = f"""🎯 LPSB MOBILE SIGNAL
@@ -89,13 +123,15 @@ def generate_signal():
 
 📈 EMA20: {ema20}
 
+🔥 Confidence: {confidence}%
+
 {status}
 
-⚡ Strong Filter Mode
+⚡ Filter Mode
 """
 
 
-    # CALL / PUT message
+    # CALL / PUT
     else:
 
         message = f"""🎯 LPSB MOBILE SIGNAL
@@ -106,7 +142,7 @@ def generate_signal():
 
 ⏳ Expiry: 1M
 
-{signal}
+🚨 {signal}
 
 📊 RSI: {rsi}
 
@@ -114,9 +150,7 @@ def generate_signal():
 
 🔥 Confidence: {confidence}%
 
-⭐⭐⭐⭐⭐
-
-⚡ Strong Filter Mode
+⚡ Filter Mode
 """
 
 
