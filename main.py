@@ -19,14 +19,18 @@ while True:
 
         now = datetime.now()
 
-        next_minute = (
-            now + timedelta(minutes=1)
+        # Signal এখন পাঠাবে,
+        # Entry হবে 2 মিনিট পরে
+        entry_time = (
+            now + timedelta(minutes=2)
         ).replace(
             second=0,
             microsecond=0
         )
 
+
         message = generate_signal()
+
 
         if message and message != last_message:
 
@@ -35,12 +39,13 @@ while True:
 
 {message}
 
-⏰ Entry Time: {next_minute.strftime('%H:%M')}
+⏰ Entry Time: {entry_time.strftime('%H:%M')}
 
 ⏳ Expiry: 1M
 
 ⚡ Prepare For Entry
 """
+
 
             send_signal(pre_message)
 
@@ -51,18 +56,22 @@ while True:
                 f"{datetime.now().strftime('%H:%M:%S')}"
             )
 
+
         else:
 
             print(
-                f"⏭ Duplicate skipped at "
-                f"{datetime.now().strftime('%H:%M:%S')}"
+                "⏭ Duplicate skipped"
             )
 
-        # 1 মিনিট wait
+
+        # প্রতি 60 সেকেন্ডে check
         time.sleep(60)
+
 
     except Exception as e:
 
-        print(f"❌ Error: {e}")
+        print(
+            f"❌ Error: {e}"
+        )
 
         time.sleep(60)
