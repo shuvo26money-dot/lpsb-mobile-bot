@@ -64,8 +64,8 @@ while True:
             )
 
 
-        # প্রতি 120 সেকেন্ডে check
-        time.sleep(120)
+        # প্রতি 60 সেকেন্ডে check
+        time.sleep(60)
 
 
     except Exception as e:
@@ -74,4 +74,4 @@ while True:
             f"❌ Error: {e}"
         )
 
-        time.sleep(120)
+        time.sleep(60)
