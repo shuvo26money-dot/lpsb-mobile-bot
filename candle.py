@@ -1,7 +1,7 @@
 import os
 import requests
 
-API_KEY = os.getenv("TWELVE_DATA_API_KEY")
+API_KEY = os.getenv("ac205cb452924fc391a790550eb2388c")
 
 
 def get_candles(pair, count=100):
