@@ -58,7 +58,6 @@ def bearish(c):
 
 
 def get_market_signal(pair):
-
     candles = get_candles(pair)
 
     if len(candles) < 60:
@@ -69,24 +68,13 @@ def get_market_signal(pair):
     rsi = calculate_rsi(candles)
 
     last = candles[-1]
-    prev = candles[-2]
 
     # CALL
-    if (
-        ema20 > ema50
-        and bullish(last)
-        and bullish(prev)
-        and 45 <= rsi <= 65
-    ):
-        return "🟢 CALL", rsi, ema20, 90
+    if ema20 > ema50 and bullish(last) and rsi >= 50:
+        return "🟢 CALL", rsi, ema20, 85
 
     # PUT
-    if (
-        ema20 < ema50
-        and bearish(last)
-        and bearish(prev)
-        and 35 <= rsi <= 55
-    ):
-        return "🔴 PUT", rsi, ema20, 90
+    if ema20 < ema50 and bearish(last) and rsi <= 50:
+        return "🔴 PUT", rsi, ema20, 85
 
     return "⏳ WAIT", rsi, ema20, 0
