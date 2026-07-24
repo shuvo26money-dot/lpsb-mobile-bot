@@ -23,6 +23,11 @@ def get_candles(pair, count=100):
         r = requests.get(url, timeout=10)
         data = r.json()
 
+        # Debug
+        print("📊 Symbol:", symbol)
+        print("📥 API Response:", data)
+        print("📈 Candles:", len(data.get("values", [])))
+
         if "values" not in data:
             print(f"❌ API Error: {data}")
             return []
